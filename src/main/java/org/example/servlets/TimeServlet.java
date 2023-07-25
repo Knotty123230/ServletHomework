@@ -29,7 +29,7 @@ public class TimeServlet extends HttpServlet {
     }
 
 
-    private String getDate(String param) {
+    public static String getDate(String param) {
         Date actualDate = new Date();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss z")
                 .withZone(ZoneId.of(param));

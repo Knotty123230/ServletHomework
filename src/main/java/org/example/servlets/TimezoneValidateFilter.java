@@ -6,8 +6,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.ZoneId;
-import java.util.Set;
+import java.time.zone.ZoneRulesException;
 
 @WebFilter("/time")
 public class TimezoneValidateFilter implements jakarta.servlet.Filter {
@@ -20,31 +19,18 @@ public class TimezoneValidateFilter implements jakarta.servlet.Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         String timezone = servletRequest.getParameter("timezone");
-        if (timezone == null) {
+        if (timezone == null || timezone.isEmpty()) {
             filterChain.doFilter(servletRequest, servletResponse);
-        }
-        boolean b = validTimeZone(timezone);
-        if (!b) {
-            HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-            response.setStatus(400);
-            response.getWriter().write("Invalid timezone!" + " STATUS CODE = " + response.getStatus());
         } else {
-            filterChain.doFilter(servletRequest, servletResponse);
-        }
-    }
+            try {
+                filterChain.doFilter(servletRequest, servletResponse);
+            } catch (ZoneRulesException e) {
+                HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-    public boolean validTimeZone(String timezone) {
-        boolean avaliable = false;
-        Set<String> availableZoneIds = ZoneId.getAvailableZoneIds();
-        System.out.println(availableZoneIds);
-        for (String availableZoneId : availableZoneIds) {
-            if (availableZoneId.contains(timezone)) {
-                avaliable = true;
-                break;
+                response.setStatus(400);
+                response.getWriter().write("Invalid timezone!" + " STATUS CODE = " + response.getStatus());
             }
         }
-        return avaliable;
     }
 
     @Override
