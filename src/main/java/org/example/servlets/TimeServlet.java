@@ -17,9 +17,8 @@ public class TimeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String format = getDate("UTC");
         if (req.getParameter("timezone") == null || req.getParameter("timezone").isEmpty()) {
-            resp.getWriter().write(format);
+            resp.getWriter().write(getDate("UTC"));
 
         } else {
             String timezone = req.getParameter("timezone");
