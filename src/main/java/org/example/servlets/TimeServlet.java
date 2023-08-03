@@ -63,7 +63,7 @@ public class TimeServlet extends HttpServlet {
                 Map.of("currentDate", currentDate)
         );
         engine.process("test", date.isEmpty() ? current : last, resp.getWriter());
-
+        resp.getWriter().close();
 
     }
 
