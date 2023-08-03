@@ -16,16 +16,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 @WebServlet("/time")
 public class TimeServlet extends HttpServlet {
     private transient TemplateEngine engine;
 
     @Override
-    public void init(ServletConfig config)  {
+    public void init(ServletConfig config) {
         engine = new TemplateEngine();
         FileTemplateResolver resolver = new FileTemplateResolver();
-        resolver.setPrefix("/Users/mac/IdeaProjects/Servlet/src/main/resources/templates/");
+        resolver.setPrefix(Objects.requireNonNull(getClass().getClassLoader().getResource("templates")).getPath());
         resolver.setSuffix(".html");
         resolver.setTemplateMode("HTML5");
         resolver.setOrder(engine.getTemplateResolvers().size());
@@ -35,7 +36,7 @@ public class TimeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws  IOException {
+            throws IOException {
         String date = "";
         String currentDate = "";
         String timezone = "timezone";
@@ -67,7 +68,7 @@ public class TimeServlet extends HttpServlet {
 
     }
 
-    private  String getString(String date, Cookie[] cookies) {
+    private String getString(String date, Cookie[] cookies) {
         String cookie;
         cookie = Arrays.stream(cookies)
                 .findFirst()
@@ -80,7 +81,7 @@ public class TimeServlet extends HttpServlet {
     }
 
 
-    public  String getDate(String param) {
+    public String getDate(String param) {
         Date actualDate = new Date();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss z")
                 .withZone(ZoneId.of(param));
