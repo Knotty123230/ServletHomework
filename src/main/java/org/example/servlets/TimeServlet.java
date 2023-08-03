@@ -38,21 +38,26 @@ public class TimeServlet extends HttpServlet {
         String date = "";
         String currentDate = "";
         String timezone = "timezone";
+        String cookie = "";
         resp.setContentType("text/html");
         String parameter = req.getParameter(timezone);
 
         if (parameter == null || parameter.isEmpty()) {
-            String cookie = Arrays.stream(req.getCookies())
-                    .findFirst()
-                    .get()
-                    .getValue();
-            if (!cookie.isEmpty()) {
-                date = getDate(cookie);
+            Cookie[] cookies = req.getCookies();
+            if (cookies != null && cookies.length > 0) {
+                cookie = Arrays.stream(cookies)
+                        .findFirst()
+                        .map(Cookie::getValue)
+                        .orElse("");
+                if (!cookie.isEmpty()) {
+                    date = getDate(cookie);
+                }
             } else {
                 currentDate = getDate("UTC");
             }
         } else {
             resp.addCookie(new Cookie("Date", parameter));
+
             currentDate = getDate(parameter);
         }
         Context last = new Context(
